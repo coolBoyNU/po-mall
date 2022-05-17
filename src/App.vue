@@ -30,7 +30,7 @@ export default {
       handler: function (newVal) {
         // newVal.meta.isMainPage 为真就取反
         this.isShow = !newVal.meta.isMainPage;
-        this.title = newVal.meta.title;
+
       },
       immediate: true
     }
