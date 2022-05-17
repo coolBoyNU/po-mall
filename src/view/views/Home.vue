@@ -10,7 +10,7 @@
           </a >
         </div >
         <div class="p-top-wrapper" >
-<!--          <img src="https://image2.suning.cn/uimg/cms/img/165268079226928831.gif" alt="" >-->
+                    <img src="https://image2.suning.cn/uimg/cms/img/165268079226928831.gif" alt="" >
         </div >
         <div class="p_icon_top" >
           <a href="" >
