@@ -9,6 +9,9 @@
             分类
           </a >
         </div >
+        <div class="p-top-wrapper" >
+          <img src="https://image2.suning.cn/uimg/cms/img/165268079226928831.gif" alt="" >
+        </div >
         <div class="p_icon_top" >
           <a href="" >
             <van-icon name="contact" size="26px" />
@@ -61,7 +64,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   height: 40px;
-  padding: 12px 20px 0 20px;
+  padding: 12px 12px 0 20px;
   background-color: #ffdb47;
 
   .p_icon_top {
@@ -71,6 +74,12 @@ export default {
       font-size: 12px;
       color: #fbfbfbed;
       font-weight: bold;
+    }
+  }
+
+  .p-top-wrapper {
+    img {
+      width: 230px;
     }
   }
 }
