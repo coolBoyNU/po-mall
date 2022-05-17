@@ -1,0 +1,5 @@
+@function px2rem($px) {
+  $bestSize: 50;
+  @return $px / $bestSize + rem;
+}
+

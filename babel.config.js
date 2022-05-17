@@ -1,9 +1,9 @@
 module.exports = {
   plugins: [
     ['import', {
-      libraryName: 'vant',
+      libraryName: 'frame',
       libraryDirectory: 'es',
       style: true
-    }, 'vant']
+    }, 'frame']
   ]
 };
