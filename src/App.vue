@@ -1,17 +1,18 @@
 <template >
   <div class="app" >
-    <van-nav-bar
-        :title="title"
-        left-text="返回"
-        right-text="按钮"
-        left-arrow
-        v-show="isShow"
-        @click-left="$router.back()"
-    />
+    <!--    <van-nav-bar-->
+    <!--        :title="title"-->
+    <!--        left-text="返回"-->
+    <!--        right-text="按钮"-->
+    <!--        left-arrow-->
+    <!--        v-show="isShow"-->
+    <!--        @click-left="$router.back()"-->
+    <!--    />-->
 
     <!--    Index组件-->
-    <router-view ></router-view >
-
+    <keep-alive include="Home" >
+      <router-view />
+    </keep-alive >
   </div >
 </template >
 
@@ -22,7 +23,7 @@ export default {
   data() {
     return {
       title: 'po商城',
-      isShow: false,
+      // isShow: false,
     }
   },
   watch: {
@@ -35,13 +36,19 @@ export default {
       immediate: true
     }
   }
+
 }
 </script >
 
 <style lang="scss" >
-.app {
-  min-width: 350px;
-  max-width: 750px;
-  margin: auto;
+* {
+  font-family: Arial, Helvetica, STHeiTi, sans-serif;
+  box-sizing: border-box;
+
+  .app {
+    min-width: 350px;
+    max-width: 750px;
+    margin: auto;
+  }
 }
 </style >
