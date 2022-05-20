@@ -21,6 +21,9 @@ import {
   GoodsAction,
   GoodsActionButton,
   GoodsActionIcon,
+  PullRefresh,
+  List,
+
 } from 'vant';
 import 'vant/lib/index.css';
 
@@ -42,6 +45,8 @@ Vue.use(Popup);
 Vue.use(GoodsAction);
 Vue.use(GoodsActionButton);
 Vue.use(GoodsActionIcon);
+Vue.use(PullRefresh);
+Vue.use(List);
 
 Vue.use({
   install() {

@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 
+
 //导入 normalize 样式规范
 import './assets/css/normalize/normalize.css'
 

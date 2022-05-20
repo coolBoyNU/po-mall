@@ -1,13 +1,12 @@
 <template >
   <div class="app" >
-    <!--    <van-nav-bar-->
-    <!--        :title="title"-->
-    <!--        left-text="返回"-->
-    <!--        right-text="按钮"-->
-    <!--        left-arrow-->
-    <!--        v-show="isShow"-->
-    <!--        @click-left="$router.back()"-->
-    <!--    />-->
+    <van-nav-bar
+        :title="title"
+        left-text="返回"
+        left-arrow
+        v-show="isShow"
+        @click-left="$router.back()"
+    />
 
     <!--    Index组件-->
     <keep-alive include="Home" >
@@ -23,7 +22,7 @@ export default {
   data() {
     return {
       title: 'po商城',
-      // isShow: false,
+      isShow: false,
     }
   },
   watch: {

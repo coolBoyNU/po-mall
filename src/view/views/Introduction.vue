@@ -60,7 +60,7 @@
         商品介绍
       </div >
       <div class="g_referral" >
-        <van-divider content-position="left" >主体</van-divider >
+        <van-divider content-position="left" >详情</van-divider >
         <div class="tab-con" v-html="goods.content" ></div >
       </div >
     </div >
@@ -249,8 +249,12 @@ export default {
       .tab-con {
         color: #666;
 
-
         ::v-deep img {
+          width: 100%;
+          height: 100%;
+        }
+
+        ::v-deep table {
           width: 100%;
           height: 100%;
         }

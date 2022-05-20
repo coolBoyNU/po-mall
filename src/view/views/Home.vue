@@ -53,8 +53,8 @@
 
     <!--    格子-->
     <div class="p_grid" >
-      <van-grid :clickable="true" :border="false" >
-        <van-grid-item v-for="val in GongGe" :key="val.id" :icon="val.url" :text="val.name" />
+      <van-grid :clickable="true" :border="false" :icon-size="50" >
+        <van-grid-item v-for="val in GongGe" :key="val.id" :icon="val.url" :text="val.name" :to="val.to" />
       </van-grid >
     </div >
 
@@ -89,8 +89,13 @@ export default {
       searchShow: false,
       swipeImage: '',
       GongGe: [
-        { id: 1, name: 'po秒杀', url: 'https://image2.suning.cn/uimg/cms/img/161293957567317395.png?from=mobile' },
-        { id: 2, name: 'po超市', url: 'https://image3.suning.cn/uimg/cms/img/161293951076282456.png?from=mobile' },
+        { id: 1, name: 'po秒杀', url: 'https://image2.suning.cn/uimg/cms/img/165050362924208528.png?from=mobile' },
+        {
+          id: 2,
+          name: 'po超市',
+          url: 'https://image3.suning.cn/uimg/cms/img/161293951076282456.png?from=mobile',
+          to: '/goodslist'
+        },
         { id: 3, name: 'po拼购', url: 'https://image2.suning.cn/uimg/cms/img/161294179334814175.png?from=mobile' },
         { id: 4, name: '手机数码', url: 'https://image2.suning.cn/uimg/cms/img/161293957567317395.png?from=mobile' },
         { id: 5, name: '电视家电', url: 'https://image2.suning.cn/uimg/cms/img/161293958842515136.png?from=mobile' },

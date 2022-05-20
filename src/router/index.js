@@ -1,7 +1,10 @@
 import Vue from 'vue'
 import VueRouter from "vue-router"
+import Nprogress from 'nprogress'
+import 'nprogress/nprogress.css'
 
 Vue.use(VueRouter)
+Vue.use(Nprogress)
 
 // 懒加载组件
 const Index = () => import('../view/Index.vue')
@@ -27,9 +30,9 @@ const router = new VueRouter({
       ]
     },
     {
-      path: '/goodslist', component: Goods_list, meta: { title: '商品' }
+      path: '/goodslist', component: Goods_list, meta: { title: 'po超市' }
     },
-    { path: '/introduction/:id', component: Introduction, props: true }
+    { path: '/introduction/:id', component: Introduction, props: true, meta: { isMainPage: true } }
   ],
   scrollBehavior(to, from, savedPosition) {
     // 跳转其它页面后 回退时，回到当前预览位置
@@ -41,4 +44,18 @@ const router = new VueRouter({
   }
 })
 
+Nprogress.configure({
+  showSpinner: false
+})
+
+// 前守卫
+router.beforeEach((to, from, next) => {
+  Nprogress.start()
+  next()
+})
+
+//后守卫
+router.afterEach((to, from) => {
+  Nprogress.done()
+})
 export default router;
