@@ -1,13 +1,14 @@
 <template >
   <div class="app" >
-    <van-nav-bar
-        :title="title"
-        left-text="返回"
-        left-arrow
-        v-show="isShow"
-        @click-left="$router.back()"
-    />
-
+    <van-sticky >
+      <van-nav-bar
+          :title="title"
+          left-text="返回"
+          left-arrow
+          v-show="isShow"
+          @click-left="$router.back()"
+      />
+    </van-sticky >
     <!--    Index组件-->
     <keep-alive include="Home" >
       <router-view />

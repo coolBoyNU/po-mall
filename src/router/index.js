@@ -30,7 +30,7 @@ const router = new VueRouter({
       ]
     },
     {
-      path: '/goodslist', component: Goods_list, meta: { title: 'po超市' }
+      path: '/goodslist', component: Goods_list, meta: { title: '手机数码' }
     },
     { path: '/introduction/:id', component: Introduction, props: true, meta: { isMainPage: true } }
   ],

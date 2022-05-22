@@ -67,15 +67,33 @@
     <!--    底部-->
     <van-goods-action >
       <van-goods-action-icon icon="chat-o" text="客服" />
-      <van-goods-action-icon icon="shop-o" text="店铺" />
-      <van-goods-action-button color="#be99ff" type="warning" text="加入购物车" />
-      <van-goods-action-button color="#7232dd" type="danger" text="立即购买" />
+      <van-goods-action-icon icon="cart-o" text="购物车" @click="onClickIcon" />
+      <van-goods-action-button color="#be99ff" type="warning" text="加入购物车" @click="toCar" />
+      <van-goods-action-button color="#7232dd" type="danger" text="立即购买" @click="toBuy" />
     </van-goods-action >
 
-
+    <!--    sku-->
+    <van-sku
+        v-model="skuShow"
+        :sku="sku"
+        :goods="goodsImg"
+        :goods-id="goods.id"
+        :hide-stock="sku.hide_stock"
+        reset-stepper-on-hide
+        :show-add-cart-btn="showAddCartBtn"
+        @add-cart="onAddCartClicked"
+        @buy-clicked="onBuyClicked"
+    >
+      <template #sku-messages >
+        <div class="card" >
+          <van-divider content-position="left" >详情</van-divider >
+          <div >商品货号：{{ goods.goods_no }}</div >
+          <div >库存：{{ goods.stock_quantity }}件</div >
+          <div >上架时间：{{ goods.add_time | dateFormat('YYYY-MM-DD') }}</div >
+        </div >
+      </template >
+    </van-sku >
   </div >
-
-
 </template >
 
 <script >
@@ -105,7 +123,19 @@ export default {
       disabledCoupons: [ coupon ],
       showList: false,
       shuffling: [],
+      skuShow: false,
+      showAddCartBtn: false,
       goods: [],
+      goodsImg: {
+        // 默认商品 sku 缩略图
+        picture: ''
+      },
+      sku: {
+        tree: [],//数据据文档
+        price: '2', // 默认价格（单位元）
+        stock_num: 227, // 商品总库存
+        hide_stock: false // 是否隐藏剩余库存
+      }
     }
   },
   methods: {
@@ -130,12 +160,46 @@ export default {
     async _gIntroduction(num) {
       let { message } = await gIntroduction(num)
       this.shuffling = message
+      //第一张图片作为商品购买弹出框的头部图片
+      this.goodsImg.picture = message[0].src;
     },
     //详情
     async _gDetails(num) {
-
       let { message } = await gDetails(num)
       this.goods = message
+      // 购买商品弹出穿赋值
+      this.sku.price = message.sell_price;
+      this.sku.stock_num = message.stock_quantity;
+    },
+    //跳转购物车
+    onClickIcon() {
+      this.$router.push('/home/cart')
+    },
+    //加入购物车
+    toCar() {
+      this.showAddCartBtn = true;
+      this.skuShow = true;
+    },
+    //立即购买
+    toBuy() {
+      this.showAddCartBtn = false;
+      this.skuShow = true;
+    },
+    //点击购买后
+    onBuyClicked(e) {
+      let { goodsId, selectedNum } = e;
+      let cartItem = { id: goodsId, number: selectedNum, sell: this.goods.sell_price, selected: true }
+      //把数据添加到vuex
+      this.$store.commit('getPrint', cartItem)
+      //跳转到购物车页面
+      this.$router.push('/home/cart')
+    },
+    //加入购物车
+    onAddCartClicked(e) {
+      let { goodsId, selectedNum } = e;
+      let cartItem = { id: goodsId, number: selectedNum, sell: this.goods.sell_price, selected: true }
+      this.$store.commit('getPrint', cartItem)
+      this.skuShow = false;
     }
 
   },

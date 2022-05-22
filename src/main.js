@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
 
-
 //导入 normalize 样式规范
 import './assets/css/normalize/normalize.css'
 
@@ -14,9 +13,16 @@ import './Element/vant.js'
 //scss
 import './assets/css/scss/common.scss'
 
+//全局过滤器 时间
+import './filters/index.js'
+
+//vuex
+import store from './store/index.js'
+
 Vue.config.productionTip = false
 
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')

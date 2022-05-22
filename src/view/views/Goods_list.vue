@@ -12,7 +12,23 @@
           @load="onLoad"
       >
         <div class="p_center_goods" >
-          <goods v-for="item in list" :goodsData="item" @PassDat="handle" />
+          <goods v-for="item in list" :goodsData="item" @PassDat="handle" >
+            <div class="g-nav-Info" >
+              <div class="g-Info-price" >
+                <span class="flag" >&yen;</span >
+                <span class="price" >{{ item.sell_price }}</span >
+                <span class="evaluate" >{{ item.stock_quantity }}W+评价</span >
+                <van-icon name="shopping-cart-o" />
+              </div >
+              <hr >
+              <div class="nav-store" >
+                <span class="line_ellipsis_l1" >{{ item.zhaiyao }}</span >
+                <a href="" >
+                  进店 >
+                </a >
+              </div >
+            </div >
+          </goods >
         </div >
       </van-list >
     </van-pull-refresh >
@@ -90,6 +106,61 @@ export default {
     justify-content: space-between;
     padding: 0 10px;
     background-color: #f7f7f7;
+
+    .g-nav-Info {
+      margin-top: 10px;
+
+      .g-Info-price {
+        font-size: 15px;
+        color: #ff5500;
+
+        .flag {
+          font-size: 12px;
+        }
+
+        .price {
+          margin-left: 2px;
+        }
+
+        .evaluate {
+          font-size: 12px;
+          margin-left: 5px;
+          color: #bbb;
+        }
+
+        .van-icon {
+          float: right;
+          width: 20px;
+          line-height: 20px;
+          border-radius: 3px;
+          color: white;
+          text-align: center;
+          background-color: #ff5500;
+        }
+      }
+
+      hr {
+        border: none;
+        border-top: 1px solid #e6e6e6;
+        color: yellow;
+      }
+
+      .nav-store {
+        width: 100%;
+        font-size: 12px;
+        color: #222;
+
+        span {
+          width: 110px;
+          display: inline-block;
+        }
+
+        a {
+          float: right;
+          color: #b999;
+        }
+      }
+    }
   }
 }
 </style >

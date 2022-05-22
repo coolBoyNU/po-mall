@@ -91,13 +91,13 @@ export default {
       GongGe: [
         { id: 1, name: 'po秒杀', url: 'https://image2.suning.cn/uimg/cms/img/165050362924208528.png?from=mobile' },
         {
-          id: 2,
-          name: 'po超市',
-          url: 'https://image3.suning.cn/uimg/cms/img/161293951076282456.png?from=mobile',
-          to: '/goodslist'
+          id: 2, name: 'po超市', url: 'https://image3.suning.cn/uimg/cms/img/161293951076282456.png?from=mobile'
         },
         { id: 3, name: 'po拼购', url: 'https://image2.suning.cn/uimg/cms/img/161294179334814175.png?from=mobile' },
-        { id: 4, name: '手机数码', url: 'https://image2.suning.cn/uimg/cms/img/161293957567317395.png?from=mobile' },
+        {
+          id: 4, name: '手机数码', url: 'https://image2.suning.cn/uimg/cms/img/161293957567317395.png?from=mobile',
+          to: '/goodslist'
+        },
         { id: 5, name: '电视家电', url: 'https://image2.suning.cn/uimg/cms/img/161293958842515136.png?from=mobile' },
         { id: 6, name: '免费水果', url: 'https://image3.suning.cn/uimg/cms/img/161293959950045622.png?from=mobile' },
         { id: 7, name: '领卷中心', url: 'https://image1.suning.cn/uimg/cms/img/161293965567020138.png?from=mobile' },

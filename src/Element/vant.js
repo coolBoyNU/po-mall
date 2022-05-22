@@ -1,28 +1,36 @@
 import Vue from 'vue';
 import {
+  Checkbox,
+  CheckboxGroup,
   CouponCell,
   CouponList,
   Divider,
+  GoodsAction,
+  GoodsActionButton,
+  GoodsActionIcon,
   Grid,
   GridItem,
   Icon,
   ImagePreview,
   Lazyload,
+  List,
   NavBar,
   Popup,
+  PullRefresh,
   Search,
+  Sku,
   Sticky,
+  SubmitBar,
   Swipe,
   SwipeItem,
   Tabbar,
   TabbarItem,
   Tag,
   Toast,
-  GoodsAction,
-  GoodsActionButton,
-  GoodsActionIcon,
-  PullRefresh,
-  List,
+  SwipeCell,
+  Card,
+  Button,
+  Stepper,
 
 } from 'vant';
 import 'vant/lib/index.css';
@@ -47,6 +55,14 @@ Vue.use(GoodsActionButton);
 Vue.use(GoodsActionIcon);
 Vue.use(PullRefresh);
 Vue.use(List);
+Vue.use(Sku);
+Vue.use(SubmitBar);
+Vue.use(Checkbox);
+Vue.use(CheckboxGroup);
+Vue.use(SwipeCell);
+Vue.use(Card);
+Vue.use(Button);
+Vue.use(Stepper);
 
 Vue.use({
   install() {
