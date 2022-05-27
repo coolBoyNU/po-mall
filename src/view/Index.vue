@@ -4,7 +4,7 @@
     <!--    路由-->
     <router-view ></router-view >
 
-    <van-tabbar v-model="active" :placeholder="true" >
+    <van-tabbar v-model="active" :placeholder="true" active-color="#ffcd00" >
       <van-tabbar-item icon="home-o" to="/home/index" >首页</van-tabbar-item >
       <van-tabbar-item icon="cart-o" to="/home/cart" >购物车</van-tabbar-item >
       <van-tabbar-item icon="user-o" to="/home/user" >我的po</van-tabbar-item >

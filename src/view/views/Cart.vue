@@ -4,10 +4,10 @@
       <div class="cart-title" >购物车</div >
     </div >
     <!--    没有商品时显示-->
-    <div class="main-nav-center" v-show="false" >
-      <div class="login" >
+    <div class="main-nav-center" v-show="isShow" >
+      <div class="login" v-show="loginStetus" >
         <span >登录后同步电脑与手机购物车的商品</span >
-        <a href="" >登录</a >
+        <router-link to="/login" >登录</router-link >
       </div >
       <div class="cart-content-empty" >
         <img src="https://oss.suning.com/vss/activity/wximg/cart/sn-cart-empty.png" alt="" >
@@ -20,67 +20,45 @@
     </div >
 
     <!--        有商品时显示-->
-    <div class="g-nav-card" v-for="item in $store.state.myStore.cartGoods" >
-      <div class="card-checkbox" >
-        <van-checkbox v-model="$store.getters.sta[item.id]" @click="cheState($store.getters.sta[item.id],item.id)" />
-      </div >
-      <div class="card-img" >
-        <img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.nRlAFygdctTCHmIWN7GxRwHaEK?w=298&h=180&c=7&r=0&o=5&pid=1.7"
-             alt="" >
-      </div >
-      <div class="card-detailed" >
-        <h3 class="title" >商品标题</h3 >
-        <p class="describe" >描述</p >
-        <div class="g-price" >
-          <span class="flag" >&yen;</span >
-          <span class="price" >{{ item.sell }}</span >
-          <span class="point" >.00</span >
-          <!--          {php}$price = explode('.',$vo['shopPrice']){/php}-->
-          <!--          <div class="price"><span>￥</span>{$price[0]}<span>.{$price[1]}</span></div>-->
-        </div >
-      </div >
-      <div class="card-stepper" >
-        <van-stepper :value="item.number" @change="Modified($event,item.id)" min="1" max="20" />
-      </div >
-    </div >
-
+    <Card v-for="item in goods" :data="item" >
+      <template #left >
+        <van-checkbox v-model="$store.getters.sta[item.id]" @click="fan($store.getters.sta[item.id],item.id)" />
+      </template >
+      <template #navStepper >
+        <van-stepper :value="$store.getters.allnumber[item.id]" @change="Modified($event,item.id)" min="1" max="20" />
+      </template >
+    </Card >
+    <transition name="delAnimation" >
+      <div class="del" v-show="delShow" @click="isDel" >删除</div >
+    </transition >
     <!--  底部订单提交-->
-    <van-submit-bar :price="rete" safe-area-inset-bottom button-text="提交订单" >
-      <van-checkbox v-model="isCheck" @click="allBtn" >全选</van-checkbox >
+    <van-submit-bar :price="rete" :disabled="BtnOrder" @submit="onSubmit" safe-area-inset-bottom button-text="提交订单" >
+      <van-checkbox v-model="isCheck" @change="checkAll" >全选</van-checkbox >
     </van-submit-bar >
 
   </div >
 </template >
 
 <script >
-
+import Card from '../../component/Card.vue'
+import { fetchGetUserAddress } from "../../api/user";
+import { fetchCommitOrder, getGoodsId } from "../../api/order.js";
+import { genOrderId } from '../../util/tools.js';
 
 export default {
   name: "Cart",
+  components: {
+    Card,
+  },
   data() {
     return {
-      isCheck: true,
-    }
-  },
-  methods: {
-    cheState(state, id) {
-      let val = { state, id }
-      //复选框选中状态
-      this.$store.commit('cartState', val)
-      let valResult = this.$store.state.myStore.cartGoods.every(item => item.selected)
-      //如果为真就改为 true 否者 false
-      this.isCheck = !!valResult
-    },
-    Modified(e, id) {
-      //加减
-      let valID = { e, id }
-      this.$store.commit('setModified', valID)
-
-    },
-    allBtn() {
-      //点击全选全部选
-      this.$store.commit('setCheck')
-
+      isCheck: false,
+      isShow: true,
+      loginStetus: true,
+      BtnOrder: true, //提交按钮
+      addressList: [], //地址
+      goods: [],
+      delShow: false, //删除
     }
   },
   computed: {
@@ -88,6 +66,96 @@ export default {
     rete() {
       let operationResult = this.$store.state.myStore.cartGoods.reduce((amt, item) => amt += item.sell * item.number, 0)
       return operationResult * 100
+    }
+  },
+  watch: {
+    isShow: {
+      handler() {
+        let data = this.$store.state.myStore.cartGoods
+        this.isShow = data.length === 0;
+        this.BtnOrder = data.length === 0;
+        if (data.length > 0) {
+          this._getGoodsId(this.$store.getters.getCart)
+        }
+      },
+      immediate: true
+    },
+    loginStetus: {
+      handler() {
+        let state = this.$store.state.myStore.token
+        if (state) {
+          this.loginStetus = false;
+        }
+      },
+      immediate: true
+    }
+  },
+  created() {
+    this._fetchGetUserAddress()
+  },
+  methods: {
+    async _getGoodsId(data) {
+      //获取数据进行熏染
+      let { message } = await getGoodsId(data)
+      this.goods = message
+    },
+    Modified(e, id) {
+      //加减
+      let valID = { e, id }
+      this.$store.commit('setModified', valID)
+    },
+    checkAll(checkState) {
+      //复选
+      this.$store.commit("checkAll", checkState)
+    },
+    fan(state, ID) {
+      //单选
+      let allVal = { state, ID }
+      this.$store.commit('fan', allVal)
+      let del = this.$store.state.myStore.cartGoods.some(item => item.selected)
+      //只要有一个勾选就显示删除按钮
+      this.delShow = del;
+    },
+    async onSubmit(data) {
+      //提交按钮
+      if (this.addressList.length === 0) {
+        this.$Dialog.alert({
+          message: '还未填写收货地址',
+        }).then(() => {
+          this.$router.push('/address')
+        });
+      } else {
+        let orderData = {
+          user_id: this.$store.state.myStore.userInfo.id,
+          order_id: genOrderId(),
+          address_id: this.addressList[0].id,
+          total_price: this.rete / 100,
+          number: this.$store.getters.totalPrices,
+          goods_ids: this.$store.getters.getCart,
+        };
+        let { message, status } = await fetchCommitOrder(orderData);
+        this.$Toast(message);
+        if (status === 0) {
+          this.$store.commit('clearShopCar');
+          this.$router.replace('/orderlist')
+        }
+      }
+    },
+    async _fetchGetUserAddress() {
+      let dataRerult = await fetchGetUserAddress(this.$store.state.myStore.userInfo.id)
+      this.addressList = dataRerult;
+    },
+    isDel() {
+      //删除
+      this.$Dialog.confirm({
+        message: '是否确认删除',
+      }).then(() => {
+        this.$store.commit('isDel')
+        this.goods = this.$store.state.myStore.cartGoods
+      }).catch(() => {
+        // on cancel
+      });
+
     }
   }
 }
@@ -182,104 +250,42 @@ export default {
     }
   }
 
+  .del {
+    position: fixed;
+    right: 10px;
+    bottom: 30%;
+    width: 40px;
+    line-height: 40px;
+    text-align: center;
+    font-size: 13px;
+    color: firebrick;
+    border: 1px solid firebrick;
+    border-radius: 50%;
+  }
+
+  /* 进场和出场期间动画 */
+  .delAnimation-enter-active,
+  .delAnimation-leave-active {
+    transition: all .8s;
+  }
+
+  /* 进场时 */
+  .delAnimation-enter {
+    opacity: 0;
+    transform: translate3d(50%, 0, 0);
+  }
+
+  /* 出场时 */
+  .delAnimation-leave-to {
+    opacity: 0;
+    transform: translate3d(50%, 0, 0);
+  }
+
   //提交按钮
   .van-submit-bar {
     bottom: 50px;
   }
 
-  //商品卡片
-  .g-nav-card {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 100px;
-    padding: 0 10px;
-    margin-top: 5px;
-    background-color: white;
-    overflow: hidden;
-    box-shadow: black 0 0 3px -2px;
-
-    .card-checkbox {
-      line-height: 100px;
-    }
-
-    .card-img {
-      width: 84px;
-      height: 84px;
-      border-radius: 6px;
-      margin: 0 10px;
-      overflow: hidden;
-
-      img {
-        width: 100%;
-        height: 100%;
-      }
-    }
-
-    .card-detailed {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      flex: 1;
-      font-size: 14px;
-      margin: 0;
-
-      .title {
-        width: 170px;
-        height: 20px;
-        color: #323233;
-        font-size: 14px;
-        margin: 0;
-        /*1.先强制一行内显示文本*/
-        white-space: nowrap;
-        /*2.超出的部分隐藏*/
-        overflow: hidden;
-        /*3.文字用省略号替代超出的部分*/
-        text-overflow: ellipsis;
-      }
-
-      .describe {
-        width: 170px;
-        height: 33px;
-        color: #646566;
-        margin: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-
-        /*弹性伸缩盒子模型显示*/
-        display: -webkit-box;
-
-        /*限制在一个块元素显示的文本的行数*/
-        -webkit-line-clamp: 2;
-
-        /*设置或检索伸缩盒对象的子元素的排列方式*/
-        -webkit-box-orient: vertical;
-      }
-
-      .g-price {
-        font-size: 16px;
-        color: #ff505a;
-        margin-top: 10px;
-
-        .flag {
-          font-size: 12px;
-          margin-right: 2px;
-        }
-
-        .point {
-          font-size: 12px;
-        }
-      }
-    }
-
-    .card-stepper {
-      position: absolute;
-      right: 10px;
-      color: #9b9c9d;
-      bottom: 5px;
-    }
-  }
-
 }
+
 </style >

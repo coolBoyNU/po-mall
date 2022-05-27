@@ -24,3 +24,11 @@ export function gDetails(num) {
 export function poColes(page, limit) {
   return axios.get(`/getgoods?pageindex=${page}&pagesize=${limit}`)
 }
+
+//搜索
+export function fetchSearchGoods(data) {
+  // 插件实例 let obj = { a: '1', b: 2 }
+  // console.log(qs.stringify(obj))
+  let queryString = Object.keys(data).map(item => `${item}=${encodeURIComponent(data[item])}`).join('&')
+  return axios.get('/search?' + queryString)
+}
