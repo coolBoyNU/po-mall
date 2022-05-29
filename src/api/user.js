@@ -4,8 +4,9 @@ export function fetchLogin(formData) {
   return axios.post('/login', formData)
 }
 
+//修改头像
 export function upload(formData) {
-  return axios.post('upload', formData)
+  return axios.post('/upload', formData)
 }
 
 //收货地址

@@ -52,6 +52,10 @@ const myStore = {
       state.token = ''
       state.userInfo = {}
     },
+    ModifyPicture(state, Picture) {
+      //修改头像 后修改本地存储
+      state.userInfo.avatar = Picture;
+    },
     isDel(state) {
       //删除
       let delData = state.cartGoods.filter(item => !item.selected)

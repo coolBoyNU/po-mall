@@ -54,7 +54,7 @@
 
     <!--    格子-->
     <div class="p_grid" >
-      <van-grid :clickable="true" :border="false" :icon-size="50" >
+      <van-grid :clickable="true" :border="false" :icon-size="45" >
         <van-grid-item v-for="val in GongGe" :key="val.id" :icon="val.url" :text="val.name" :to="val.to" />
       </van-grid >
     </div >
@@ -89,11 +89,11 @@
         searchShow: false,
         swipeImage: '',
         GongGe: [
-          { id: 1, name: 'po秒杀', url: 'https://image2.suning.cn/uimg/cms/img/165050362924208528.png?from=mobile' },
+          { id: 1, name: '限时秒杀', url: 'https://image2.suning.cn/uimg/cms/img/165050362924208528.png?from=mobile' },
           {
-            id: 2, name: 'po超市', url: 'https://image3.suning.cn/uimg/cms/img/161293951076282456.png?from=mobile'
+            id: 2, name: '海鲜超市', url: 'https://image3.suning.cn/uimg/cms/img/161293951076282456.png?from=mobile'
           },
-          { id: 3, name: 'po拼购', url: 'https://image2.suning.cn/uimg/cms/img/161294179334814175.png?from=mobile' },
+          { id: 3, name: '半价拼购', url: 'https://image2.suning.cn/uimg/cms/img/161294179334814175.png?from=mobile' },
           {
             id: 4, name: '手机数码', url: 'https://image2.suning.cn/uimg/cms/img/161293957567317395.png?from=mobile',
             to: '/goodslist'

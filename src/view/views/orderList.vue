@@ -14,8 +14,8 @@
           <template #footer >
             <van-button
               size="mini"
-              type="danger"
-              v-if="item.status === 1"
+              type="primary"
+              v-if="item.status === 1||item.status===2"
               v-clipboard:copy="item.order_id"
               v-clipboard:success="onCopy"
             >

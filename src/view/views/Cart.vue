@@ -28,7 +28,10 @@
         <van-stepper :value="$store.getters.allnumber[item.id]" @change="Modified($event,item.id)" min="1" max="20" />
       </template >
     </Card >
-    <transition name="delAnimation" >
+    <transition
+      enter-active-class="animate__animated animate__backInRight"
+      leave-active-class="animate__animated animate__bounceOutRight"
+    >
       <div class="del" v-show="delShow" @click="isDel" >删除</div >
     </transition >
     <!--  底部订单提交-->
@@ -40,252 +43,234 @@
 </template >
 
 <script >
-import Card from '../../component/Card.vue'
-import { fetchGetUserAddress } from "../../api/user";
-import { fetchCommitOrder, getGoodsId } from "../../api/order.js";
-import { genOrderId } from '../../util/tools.js';
+  import Card from '../../component/Card.vue'
+  import { fetchGetUserAddress } from "../../api/user";
+  import { fetchCommitOrder, getGoodsId } from "../../api/order.js";
+  import { genOrderId } from '../../util/tools.js';
 
-export default {
-  name: "Cart",
-  components: {
-    Card,
-  },
-  data() {
-    return {
-      isCheck: false,
-      isShow: true,
-      loginStetus: true,
-      BtnOrder: true, //提交按钮
-      addressList: [], //地址
-      goods: [],
-      delShow: false, //删除
-    }
-  },
-  computed: {
-    //总价
-    rete() {
-      let operationResult = this.$store.state.myStore.cartGoods.reduce((amt, item) => amt += item.sell * item.number, 0)
-      return operationResult * 100
-    }
-  },
-  watch: {
-    isShow: {
-      handler() {
-        let data = this.$store.state.myStore.cartGoods
-        this.isShow = data.length === 0;
-        this.BtnOrder = data.length === 0;
-        if (data.length > 0) {
-          this._getGoodsId(this.$store.getters.getCart)
-        }
-      },
-      immediate: true
+  export default {
+    name: "Cart",
+    components: {
+      Card,
     },
-    loginStetus: {
-      handler() {
-        let state = this.$store.state.myStore.token
-        if (state) {
-          this.loginStetus = false;
-        }
-      },
-      immediate: true
-    }
-  },
-  created() {
-    this._fetchGetUserAddress()
-  },
-  methods: {
-    async _getGoodsId(data) {
-      //获取数据进行熏染
-      let { message } = await getGoodsId(data)
-      this.goods = message
-    },
-    Modified(e, id) {
-      //加减
-      let valID = { e, id }
-      this.$store.commit('setModified', valID)
-    },
-    checkAll(checkState) {
-      //复选
-      this.$store.commit("checkAll", checkState)
-    },
-    fan(state, ID) {
-      //单选
-      let allVal = { state, ID }
-      this.$store.commit('fan', allVal)
-      let del = this.$store.state.myStore.cartGoods.some(item => item.selected)
-      //只要有一个勾选就显示删除按钮
-      this.delShow = del;
-    },
-    async onSubmit(data) {
-      //提交按钮
-      if (this.addressList.length === 0) {
-        this.$Dialog.alert({
-          message: '还未填写收货地址',
-        }).then(() => {
-          this.$router.push('/address')
-        });
-      } else {
-        let orderData = {
-          user_id: this.$store.state.myStore.userInfo.id,
-          order_id: genOrderId(),
-          address_id: this.addressList[0].id,
-          total_price: this.rete / 100,
-          number: this.$store.getters.totalPrices,
-          goods_ids: this.$store.getters.getCart,
-        };
-        let { message, status } = await fetchCommitOrder(orderData);
-        this.$Toast(message);
-        if (status === 0) {
-          this.$store.commit('clearShopCar');
-          this.$router.replace('/orderlist')
-        }
+    data() {
+      return {
+        isCheck: false,
+        isShow: true,
+        loginStetus: true,
+        BtnOrder: true, //提交按钮
+        addressList: [], //地址
+        goods: [],
+        delShow: false, //删除
       }
     },
-    async _fetchGetUserAddress() {
-      let dataRerult = await fetchGetUserAddress(this.$store.state.myStore.userInfo.id)
-      this.addressList = dataRerult;
+    computed: {
+      //总价
+      rete() {
+        let operationResult = this.$store.state.myStore.cartGoods.reduce((amt, item) => amt += item.sell * item.number, 0)
+        return operationResult * 100
+      }
     },
-    isDel() {
-      //删除
-      this.$Dialog.confirm({
-        message: '是否确认删除',
-      }).then(() => {
-        this.$store.commit('isDel')
-        this.goods = this.$store.state.myStore.cartGoods
-      }).catch(() => {
-        // on cancel
-      });
+    watch: {
+      isShow: {
+        handler() {
+          let data = this.$store.state.myStore.cartGoods
+          this.isShow = data.length === 0;
+          this.BtnOrder = data.length === 0;
+          if (data.length > 0) {
+            this._getGoodsId(this.$store.getters.getCart)
+          }
+        },
+        immediate: true
+      },
+      loginStetus: {
+        handler() {
+          let state = this.$store.state.myStore.token
+          if (state) {
+            this.loginStetus = false;
+          }
+        },
+        immediate: true
+      }
+    },
+    created() {
+      this._fetchGetUserAddress()
+    },
+    methods: {
+      async _getGoodsId(data) {
+        //获取数据进行熏染
+        let { message } = await getGoodsId(data)
+        this.goods = message
+      },
+      Modified(e, id) {
+        //加减
+        let valID = { e, id }
+        this.$store.commit('setModified', valID)
+      },
+      checkAll(checkState) {
+        //复选
+        this.$store.commit("checkAll", checkState)
+      },
+      fan(state, ID) {
+        //单选
+        let allVal = { state, ID }
+        this.$store.commit('fan', allVal)
+        let del = this.$store.state.myStore.cartGoods.some(item => item.selected)
+        //只要有一个勾选就显示删除按钮
+        this.delShow = del;
+      },
+      async onSubmit(data) {
+        //提交按钮
+        if (this.addressList.length === 0) {
+          this.$Dialog.alert({
+            message: '还未填写收货地址',
+          }).then(() => {
+            this.$router.push('/address')
+          });
+        } else {
+          let orderData = {
+            user_id: this.$store.state.myStore.userInfo.id,
+            order_id: genOrderId(),
+            address_id: this.addressList[0].id,
+            total_price: this.rete / 100,
+            number: this.$store.getters.totalPrices,
+            goods_ids: this.$store.getters.getCart,
+          };
+          let { message, status } = await fetchCommitOrder(orderData);
+          this.$Toast(message);
+          if (status === 0) {
+            this.$store.commit('clearShopCar');
+            this.$router.replace('/orderlist')
+          }
+        }
+      },
+      async _fetchGetUserAddress() {
+        let dataRerult = await fetchGetUserAddress(this.$store.state.myStore.userInfo.id)
+        this.addressList = dataRerult;
+      },
+      isDel() {
+        //删除
+        this.$Dialog.confirm({
+          message: '是否确认删除',
+        }).then(() => {
+          this.$store.commit('isDel')
+          this.goods = this.$store.state.myStore.cartGoods
+        }).catch(() => {
+          // on cancel
+        });
 
+      }
     }
   }
-}
 </script >
 
 <style lang="scss" scoped >
-.p_cart {
-  height: 92.5vh;
-  background-color: #f7f8fa;
+  .p_cart {
+    height: 92.5vh;
+    background-color: #f7f8fa;
 
-  .top-nav-header {
-    width: 100%;
-    line-height: 40px;
-    border-bottom: 1px solid #e3e3e3;
-    background-color: white;
-
-    .cart-title {
-      font-size: 16px;
-      text-align: center;
-    }
-  }
-
-  .main-nav-center {
-    padding: 0 10px;
-
-    .login {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .top-nav-header {
       width: 100%;
-      line-height: 10px;
-      border-radius: 5px;
-      padding: 5px 10px;
-      margin-top: 15px;
-      background-color: #ffe37e;
+      line-height: 40px;
+      border-bottom: 1px solid #e3e3e3;
+      background-color: white;
 
-      span {
-        font-size: 12px;
-        color: black;
-      }
-
-      a {
-        line-height: 20px;
-        font-size: 14px;
-        border-radius: 3px;
-        padding: 0 4px;
-        color: rgba(255, 255, 255, 0.91);
-        background-color: black;
+      .cart-title {
+        font-size: 16px;
+        text-align: center;
       }
     }
 
-    .cart-content-empty {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 40vh;
+    .main-nav-center {
+      padding: 0 10px;
 
-      img {
-        width: 100px;
-        height: 100px;
-      }
-
-      .empty-cart-tip {
+      .login {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         width: 100%;
-        font-size: 12px;
-        color: #666666;
-        text-align: center;
-        margin: 10px 0;
+        line-height: 10px;
+        border-radius: 5px;
+        padding: 5px 10px;
+        margin-top: 15px;
+        background-color: #ffe37e;
+
+        span {
+          font-size: 12px;
+          color: black;
+        }
+
+        a {
+          line-height: 20px;
+          font-size: 14px;
+          border-radius: 3px;
+          padding: 0 4px;
+          color: rgba(255, 255, 255, 0.91);
+          background-color: black;
+        }
       }
 
-      .lead {
-        width: 47px;
-        line-height: 20px;
-        border-radius: 3.5px;
-        border: 1px solid #e5e5e5;
-        text-align: center;
-        background-color: white;
-        color: #666666;
-        font-size: 12px;
+      .cart-content-empty {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 40vh;
+
+        img {
+          width: 100px;
+          height: 100px;
+        }
+
+        .empty-cart-tip {
+          width: 100%;
+          font-size: 12px;
+          color: #666666;
+          text-align: center;
+          margin: 10px 0;
+        }
+
+        .lead {
+          width: 47px;
+          line-height: 20px;
+          border-radius: 3.5px;
+          border: 1px solid #e5e5e5;
+          text-align: center;
+          background-color: white;
+          color: #666666;
+          font-size: 12px;
+        }
+
       }
 
+      .reach-bottom {
+        display: flex;
+        justify-content: center;
+
+        img {
+          width: 210px;
+        }
+      }
     }
 
-    .reach-bottom {
-      display: flex;
-      justify-content: center;
-
-      img {
-        width: 210px;
-      }
+    .del {
+      position: fixed;
+      right: 10px;
+      bottom: 30%;
+      width: 40px;
+      line-height: 40px;
+      text-align: center;
+      font-size: 13px;
+      color: firebrick;
+      border: 1px solid firebrick;
+      border-radius: 50%;
     }
-  }
 
-  .del {
-    position: fixed;
-    right: 10px;
-    bottom: 30%;
-    width: 40px;
-    line-height: 40px;
-    text-align: center;
-    font-size: 13px;
-    color: firebrick;
-    border: 1px solid firebrick;
-    border-radius: 50%;
-  }
+    //提交订单
+    .van-submit-bar {
+      bottom: 49px;
+    }
 
-  /* 进场和出场期间动画 */
-  .delAnimation-enter-active,
-  .delAnimation-leave-active {
-    transition: all .8s;
   }
-
-  /* 进场时 */
-  .delAnimation-enter {
-    opacity: 0;
-    transform: translate3d(50%, 0, 0);
-  }
-
-  /* 出场时 */
-  .delAnimation-leave-to {
-    opacity: 0;
-    transform: translate3d(50%, 0, 0);
-  }
-
-  //提交按钮
-  .van-submit-bar {
-    bottom: 50px;
-  }
-
-}
 
 </style >

@@ -14,8 +14,7 @@ import './Element/vant.js'
 import './assets/css/scss/common.scss'
 
 //动画
-import 'animate'
-
+import 'animate.css'
 //全局过滤器 时间
 import './filters/index.js'
 

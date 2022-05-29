@@ -10,7 +10,7 @@
       />
     </van-sticky >
     <!--    Index组件-->
-    <keep-alive name="Home" >
+    <keep-alive include="Index,Goods_list" >
       <router-view />
     </keep-alive >
   </div >
