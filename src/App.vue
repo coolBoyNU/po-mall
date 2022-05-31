@@ -1,5 +1,6 @@
 <template >
   <div class="app" >
+
     <van-sticky >
       <van-nav-bar
         :title="title"
@@ -24,6 +25,7 @@
       return {
         title: 'po商城',
         isShow: false,
+        isOnLine: navigator.online
       }
     },
     watch: {
@@ -34,6 +36,21 @@
           this.title = newVal.meta.title;
         },
         immediate: true
+      },
+      // watch监听网络的状态
+      isOnLine() {
+        this.isOnLine === false && this.$Toast.fail("网络异常，请检查网络");
+        this.isOnLine === true && this.$Toast.success("网络已经连接");
+      }
+    },
+    mounted() {
+      window.addEventListener('online', this.updateNetworkStatu);
+      window.addEventListener('offline', this.updateNetworkStatu);
+    },
+    methods: {
+      updateNetworkStatu(e) {
+        //网络是否在线
+        this.isOnLine = e.type === 'online'
       }
     }
 

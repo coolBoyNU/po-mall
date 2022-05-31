@@ -1,7 +1,13 @@
 import axios from './querys.js'
 
+//登录
 export function fetchLogin(formData) {
   return axios.post('/login', formData)
+}
+
+//注册
+export function fetchRegister(formData) {
+  return axios.post('/register', formData)
 }
 
 //修改头像

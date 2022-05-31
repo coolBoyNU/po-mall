@@ -1,5 +1,5 @@
 {
-  //tsconfig.json 时间插件
+  //db.json 时间插件
   "compilerOptions": {
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true

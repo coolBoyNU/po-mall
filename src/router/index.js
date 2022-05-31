@@ -15,6 +15,7 @@ const User = () => import('../view/views/User.vue')
 const Goods_list = () => import('../view/views/Goods_list.vue')
 const Introduction = () => import('../view/views/Introduction.vue')
 const Login = () => import('../view/views/Login.vue')
+const Register = () => import('../view/views/Register.vue')
 const myData = () => import('../view/myinfo/MyData.vue')
 const AddressList = () => import('../view/myinfo/AddressList.vue')
 const orderList = () => import('../view/views/orderList.vue')
@@ -46,6 +47,7 @@ const router = new VueRouter({
     },
     { path: '/introduction/:id', component: Introduction, props: true, meta: { isMainPage: true } },
     { path: '/login', component: Login, meta: { pageTitle: '用户登录', isShowNavBar: true } },
+    { path: '/register', component: Register, meta: { pageTitle: '注册', isShowNavBar: true } },
     { path: '/myinfo', component: myData },
     { path: '/orderlist', component: orderList },
     { path: '/addresslist', component: AddressList },

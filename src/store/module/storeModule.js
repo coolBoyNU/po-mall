@@ -22,21 +22,15 @@ const myStore = {
     },
     //全选，全部选
     checkAll(state, allVal) {
-      let checkAllStatus = state.cartGoods.every(item => item.selected)
-      if (!checkAllStatus) {
-        for (let key of state.cartGoods) {
-          key.selected = allVal;
-        }
-      } else {
-        for (let key of state.cartGoods) {
-          key.selected = allVal;
-        }
-      }
+      state.cartGoods.map((item) => {
+        return item.selected = allVal
+      })
     },
-    fan(state, val) {
+    checkOne(state, val) {
       //单选框
-      let result = state.cartGoods.findIndex(item => item.id === val.ID)
-      state.cartGoods[result].selected = val.state;
+      let status = state.cartGoods.findIndex(item => item.id === val.i)
+      //传递过来的状态 val.status 进行取反
+      state.cartGoods[status].selected = !val.status
     },
     setToken(state, token) {
       //保存token到本地存储
@@ -56,10 +50,10 @@ const myStore = {
       //修改头像 后修改本地存储
       state.userInfo.avatar = Picture;
     },
-    isDel(state) {
+    isDel(state, id) {
       //删除
-      let delData = state.cartGoods.filter(item => !item.selected)
-      state.cartGoods = delData
+      let delData = state.cartGoods.filter(item => item.id === id)
+      state.cartGoods.splice(delData, 1)
     },
     clearShopCar(state) {
       //提交订单成功后清空购物车

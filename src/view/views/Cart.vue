@@ -1,8 +1,6 @@
 <template >
-  <div class="p_cart" >
-    <div class="top-nav-header" >
-      <div class="cart-title" >购物车</div >
-    </div >
+  <div class="nav-cart" >
+    <van-nav-bar title="我的购物车" />
     <!--    没有商品时显示-->
     <div class="main-nav-center" v-show="isShow" >
       <div class="login" v-show="loginStetus" >
@@ -19,49 +17,54 @@
       </div >
     </div >
 
-    <!--        有商品时显示-->
-    <Card v-for="item in goods" :data="item" >
+    <!--商品-->
+    <van-swipe-cell v-for="(item,i) in goods" :key="item.id" >
       <template #left >
-        <van-checkbox v-model="$store.getters.sta[item.id]" @click="fan($store.getters.sta[item.id],item.id)" />
+        <van-button square type="primary" text="选择" />
       </template >
-      <template #navStepper >
-        <van-stepper :value="$store.getters.allnumber[item.id]" @change="Modified($event,item.id)" min="1" max="20" />
+      <van-card
+        :price="item.sell_price"
+        desc="描述信息"
+        :title="item.title"
+        :thumb="item.thumb_path"
+      >
+        <template #num >
+          <van-stepper :value="$store.getters.allnumber[item.id]" theme="round" button-size="22" disable-input
+                       @change="Modified($event,item.id)" />
+        </template >
+        <template #tag >
+          <van-checkbox :value="$store.getters.sta[item.id]" @click="checkOne($store.getters.sta[item.id],item.id)" />
+        </template >
+      </van-card >
+      <!--    删除按钮-->
+      <template #right >
+        <van-button square text="删除" type="danger" class="delete-button" @click="isDel(item.id,i)" />
       </template >
-    </Card >
-    <transition
-      enter-active-class="animate__animated animate__backInRight"
-      leave-active-class="animate__animated animate__bounceOutRight"
-    >
-      <div class="del" v-show="delShow" @click="isDel" >删除</div >
-    </transition >
-    <!--  底部订单提交-->
-    <van-submit-bar :price="rete" :disabled="BtnOrder" @submit="onSubmit" safe-area-inset-bottom button-text="提交订单" >
-      <van-checkbox v-model="isCheck" @change="checkAll" >全选</van-checkbox >
-    </van-submit-bar >
+    </van-swipe-cell >
 
+    <!--  提交按钮-->
+    <van-submit-bar :price="rete" :disabled="BtnOrder" @submit="onSubmit" button-text="提交订单" >
+      <van-checkbox v-model="checkAll" @click="checkA" >全选</van-checkbox >
+    </van-submit-bar >
   </div >
 </template >
 
 <script >
-  import Card from '../../component/Card.vue'
+  import { fetchCommitOrder, getGoodsId } from "../../api/order";
   import { fetchGetUserAddress } from "../../api/user";
-  import { fetchCommitOrder, getGoodsId } from "../../api/order.js";
   import { genOrderId } from '../../util/tools.js';
 
   export default {
-    name: "Cart",
-    components: {
-      Card,
-    },
+    name: "",
     data() {
       return {
-        isCheck: false,
-        isShow: true,
-        loginStetus: true,
+        isShow: true, //无商品背景
+        loginStetus: true, //无商品背景
+        checkAll: false,//全选按钮状态
         BtnOrder: true, //提交按钮
-        addressList: [], //地址
-        goods: [],
-        delShow: false, //删除
+        goods: [], //存放后台数据
+        user_id: this.$store.state.myStore.userInfo.id, //用户id
+        order: [], //地址
       }
     },
     computed: {
@@ -91,37 +94,46 @@
           }
         },
         immediate: true
-      }
+      },
     },
     created() {
       this._fetchGetUserAddress()
     },
     methods: {
-      async _getGoodsId(data) {
-        //获取数据进行熏染
-        let { message } = await getGoodsId(data)
-        this.goods = message
-      },
       Modified(e, id) {
         //加减
-        let valID = { e, id }
-        this.$store.commit('setModified', valID)
+        this.$store.commit('setModified', { e, id })
       },
-      checkAll(checkState) {
-        //复选
-        this.$store.commit("checkAll", checkState)
+      checkA() {
+        //全选
+        this.$store.commit('checkAll', this.checkAll)
       },
-      fan(state, ID) {
+      checkOne(status, i) {
         //单选
-        let allVal = { state, ID }
-        this.$store.commit('fan', allVal)
-        let del = this.$store.state.myStore.cartGoods.some(item => item.selected)
-        //只要有一个勾选就显示删除按钮
-        this.delShow = del;
+        this.$store.commit('checkOne', { status, i })
+        //如果全部选中就把 全选按钮勾选 有一个未选中就取消全选按钮
+        let bool = this.$store.state.myStore.cartGoods.every(item => {
+          return item.selected
+        })
+        this.checkAll = bool;
+      },
+      isDel(id, i) {
+        //删除
+        this.goods.splice(i, 1)
+        // 删除vuex
+        this.$store.commit("isDel", id);
+      },
+      async _getGoodsId(goods_id) {
+        //商品价格图片渲染
+        let { message } = await getGoodsId(goods_id)
+        this.goods = message
+      },
+      async _fetchGetUserAddress() {
+        this.order = await fetchGetUserAddress(this.user_id)
       },
       async onSubmit(data) {
         //提交按钮
-        if (this.addressList.length === 0) {
+        if (this.order.length === 0) {
           this.$Dialog.alert({
             message: '还未填写收货地址',
           }).then(() => {
@@ -129,13 +141,13 @@
           });
         } else {
           let orderData = {
-            user_id: this.$store.state.myStore.userInfo.id,
+            user_id: this.user_id,
             order_id: genOrderId(),
-            address_id: this.addressList[0].id,
+            address_id: this.order[0].id,
             total_price: this.rete / 100,
             number: this.$store.getters.totalPrices,
             goods_ids: this.$store.getters.getCart,
-          };
+          }
           let { message, status } = await fetchCommitOrder(orderData);
           this.$Toast(message);
           if (status === 0) {
@@ -143,44 +155,30 @@
             this.$router.replace('/orderlist')
           }
         }
-      },
-      async _fetchGetUserAddress() {
-        let dataRerult = await fetchGetUserAddress(this.$store.state.myStore.userInfo.id)
-        this.addressList = dataRerult;
-      },
-      isDel() {
-        //删除
-        this.$Dialog.confirm({
-          message: '是否确认删除',
-        }).then(() => {
-          this.$store.commit('isDel')
-          this.goods = this.$store.state.myStore.cartGoods
-        }).catch(() => {
-          // on cancel
-        });
-
       }
     }
   }
 </script >
 
 <style lang="scss" scoped >
-  .p_cart {
-    height: 92.5vh;
-    background-color: #f7f8fa;
-
-    .top-nav-header {
-      width: 100%;
-      line-height: 40px;
-      border-bottom: 1px solid #e3e3e3;
-      background-color: white;
-
-      .cart-title {
-        font-size: 16px;
-        text-align: center;
-      }
+  .nav-cart {
+    .van-submit-bar {
+      bottom: 49px;
     }
 
+    //删除按钮
+    .goods-card {
+      margin: 0;
+      background-color: white;
+
+    }
+
+    //删除按钮大小
+    .delete-button {
+      height: 100%;
+    }
+
+    //没有商品显示
     .main-nav-center {
       padding: 0 10px;
 
@@ -253,24 +251,5 @@
       }
     }
 
-    .del {
-      position: fixed;
-      right: 10px;
-      bottom: 30%;
-      width: 40px;
-      line-height: 40px;
-      text-align: center;
-      font-size: 13px;
-      color: firebrick;
-      border: 1px solid firebrick;
-      border-radius: 50%;
-    }
-
-    //提交订单
-    .van-submit-bar {
-      bottom: 49px;
-    }
-
   }
-
 </style >

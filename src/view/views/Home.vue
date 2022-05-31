@@ -72,11 +72,11 @@
 </template >
 
 <script >
-  import { figure, goodsData } from "../../api/getHomeData.js";
+  import { figure, goodsData } from "@/api/getHomeData.js";
 
-  import BackTop from "../../component/BackTop.vue";
+  import BackTop from "@/component/BackTop.vue";
 
-  import Goods from "../../component/Goods.vue"
+  import Goods from "@/component/Goods.vue"
 
   export default {
     name: "Home",

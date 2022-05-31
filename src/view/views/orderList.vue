@@ -49,7 +49,6 @@
         ],
         allOrder: [],
         status: '1', //记录状态
-
       };
     },
     computed: {
@@ -120,7 +119,7 @@
               icon: 'wechat-pay'
             });
             //修改订单 发货 收货状态
-            value.status = 2;
+            value.status = 1;
             value.is_take = 1;
             value.is_out = 1;
           } catch (err) {
